@@ -16,18 +16,18 @@ pub const ColorRGB = struct {
 };
 
 pub const Color = union(enum) {
-    Default,
-    Black,
-    Red,
-    Green,
-    Yellow,
-    Blue,
-    Magenta,
-    Cyan,
-    White,
-    Fixed: u8,
-    Grey: u8,
-    RGB: ColorRGB,
+    default,
+    black,
+    red,
+    green,
+    yellow,
+    blue,
+    magenta,
+    cyan,
+    white,
+    fixed: u8,
+    grey: u8,
+    rgb: ColorRGB,
 
     const Self = @This();
 
@@ -51,47 +51,47 @@ pub const FontStyle = packed struct {
 
     const Self = @This();
 
-    pub const bold = Self{
+    pub const Bold = Self{
         .bold = true,
     };
 
-    pub const dim = Self{
+    pub const Dim = Self{
         .dim = true,
     };
 
-    pub const italic = Self{
+    pub const Italic = Self{
         .italic = true,
     };
 
-    pub const underline = Self{
+    pub const Underline = Self{
         .underline = true,
     };
 
-    pub const slowblink = Self{
+    pub const Slowblink = Self{
         .slowblink = true,
     };
 
-    pub const rapidblink = Self{
+    pub const Rapidblink = Self{
         .rapidblink = true,
     };
 
-    pub const reverse = Self{
+    pub const Reverse = Self{
         .reverse = true,
     };
 
-    pub const hidden = Self{
+    pub const Hidden = Self{
         .hidden = true,
     };
 
-    pub const crossedout = Self{
+    pub const CrossedOut = Self{
         .crossedout = true,
     };
 
-    pub const fraktur = Self{
+    pub const Fraktur = Self{
         .fraktur = true,
     };
 
-    pub const overline = Self{
+    pub const Overline = Self{
         .overline = true,
     };
 
@@ -130,17 +130,17 @@ pub const FontStyle = packed struct {
 
 test "FontStyle bits" {
     try expectEqual(@as(u11, 0), (FontStyle{}).toU11());
-    try expectEqual(@as(u11, 1), (FontStyle.bold).toU11());
-    try expectEqual(@as(u11, 1 << 2), (FontStyle.italic).toU11());
+    try expectEqual(@as(u11, 1), (FontStyle.Bold).toU11());
+    try expectEqual(@as(u11, 1 << 2), (FontStyle.Italic).toU11());
     try expectEqual(@as(u11, 1 << 2) | 1, (FontStyle{ .bold = true, .italic = true }).toU11());
     try expectEqual(FontStyle{}, FontStyle.fromU11((FontStyle{}).toU11()));
-    try expectEqual(FontStyle.bold, FontStyle.fromU11((FontStyle.bold).toU11()));
+    try expectEqual(FontStyle.Bold, FontStyle.fromU11((FontStyle.Bold).toU11()));
 }
 
 test "FontStyle subsetOf" {
     const default = FontStyle{};
-    const bold = FontStyle.bold;
-    const italic = FontStyle.italic;
+    const bold = FontStyle.Bold;
+    const italic = FontStyle.Italic;
     const bold_and_italic = FontStyle{ .bold = true, .italic = true };
 
     try expect(default.subsetOf(default));
@@ -159,8 +159,8 @@ test "FontStyle subsetOf" {
 
 test "FontStyle without" {
     const default = FontStyle{};
-    const bold = FontStyle.bold;
-    const italic = FontStyle.italic;
+    const bold = FontStyle.Bold;
+    const italic = FontStyle.Italic;
     const bold_and_italic = FontStyle{ .bold = true, .italic = true };
 
     try expectEqual(default, default.without(default));
@@ -173,8 +173,8 @@ test "FontStyle without" {
 }
 
 pub const Style = struct {
-    foreground: Color = .Default,
-    background: Color = .Default,
+    foreground: Color = .default,
+    background: Color = .default,
     font_style: FontStyle = FontStyle{},
 
     const Self = @This();
@@ -202,10 +202,10 @@ pub const Style = struct {
 test "style equality" {
     const a = Style{};
     const b = Style{
-        .font_style = FontStyle.bold,
+        .font_style = FontStyle.Bold,
     };
     const c = Style{
-        .foreground = Color.Red,
+        .foreground = Color.red,
     };
 
     try expect(a.isDefault());

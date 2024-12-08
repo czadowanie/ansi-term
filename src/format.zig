@@ -64,7 +64,7 @@ pub fn updateStyle(writer: anytype, new: Style, old: ?Style) !void {
     }
 
     // Foreground color
-    if (reset_required and new.foreground != .Default or old != null and !old.?.foreground.eql(new.foreground)) {
+    if (reset_required and new.foreground != .default or old != null and !old.?.foreground.eql(new.foreground)) {
         if (written_something) {
             try writer.writeAll(";");
         } else {
@@ -72,23 +72,23 @@ pub fn updateStyle(writer: anytype, new: Style, old: ?Style) !void {
         }
 
         switch (new.foreground) {
-            .Default => try writer.writeAll("39"),
-            .Black => try writer.writeAll("30"),
-            .Red => try writer.writeAll("31"),
-            .Green => try writer.writeAll("32"),
-            .Yellow => try writer.writeAll("33"),
-            .Blue => try writer.writeAll("34"),
-            .Magenta => try writer.writeAll("35"),
-            .Cyan => try writer.writeAll("36"),
-            .White => try writer.writeAll("37"),
-            .Fixed => |fixed| try writer.print("38;5;{}", .{fixed}),
-            .Grey => |grey| try writer.print("38;2;{};{};{}", .{ grey, grey, grey }),
-            .RGB => |rgb| try writer.print("38;2;{};{};{}", .{ rgb.r, rgb.g, rgb.b }),
+            .default => try writer.writeAll("39"),
+            .black => try writer.writeAll("30"),
+            .red => try writer.writeAll("31"),
+            .green => try writer.writeAll("32"),
+            .yellow => try writer.writeAll("33"),
+            .blue => try writer.writeAll("34"),
+            .magenta => try writer.writeAll("35"),
+            .cyan => try writer.writeAll("36"),
+            .white => try writer.writeAll("37"),
+            .fixed => |fixed| try writer.print("38;5;{}", .{fixed}),
+            .grey => |grey| try writer.print("38;2;{};{};{}", .{ grey, grey, grey }),
+            .rgb => |rgb| try writer.print("38;2;{};{};{}", .{ rgb.r, rgb.g, rgb.b }),
         }
     }
 
     // Background color
-    if (reset_required and new.background != .Default or old != null and !old.?.background.eql(new.background)) {
+    if (reset_required and new.background != .default or old != null and !old.?.background.eql(new.background)) {
         if (written_something) {
             try writer.writeAll(";");
         } else {
@@ -96,18 +96,18 @@ pub fn updateStyle(writer: anytype, new: Style, old: ?Style) !void {
         }
 
         switch (new.background) {
-            .Default => try writer.writeAll("49"),
-            .Black => try writer.writeAll("40"),
-            .Red => try writer.writeAll("41"),
-            .Green => try writer.writeAll("42"),
-            .Yellow => try writer.writeAll("43"),
-            .Blue => try writer.writeAll("44"),
-            .Magenta => try writer.writeAll("45"),
-            .Cyan => try writer.writeAll("46"),
-            .White => try writer.writeAll("47"),
-            .Fixed => |fixed| try writer.print("48;5;{}", .{fixed}),
-            .Grey => |grey| try writer.print("48;2;{};{};{}", .{ grey, grey, grey }),
-            .RGB => |rgb| try writer.print("48;2;{};{};{}", .{ rgb.r, rgb.g, rgb.b }),
+            .default => try writer.writeAll("49"),
+            .black => try writer.writeAll("40"),
+            .red => try writer.writeAll("41"),
+            .green => try writer.writeAll("42"),
+            .yellow => try writer.writeAll("43"),
+            .blue => try writer.writeAll("44"),
+            .magenta => try writer.writeAll("45"),
+            .cyan => try writer.writeAll("46"),
+            .white => try writer.writeAll("47"),
+            .fixed => |fixed| try writer.print("48;5;{}", .{fixed}),
+            .grey => |grey| try writer.print("48;2;{};{};{}", .{ grey, grey, grey }),
+            .rgb => |rgb| try writer.print("48;2;{};{};{}", .{ rgb.r, rgb.g, rgb.b }),
         }
     }
 
@@ -132,7 +132,7 @@ test "same style non-default, no update" {
     var fixed_buf_stream = fixedBufferStream(&buf);
 
     const sty = Style{
-        .foreground = Color.Green,
+        .foreground = Color.green,
     };
     try updateStyle(fixed_buf_stream.writer(), sty, sty);
 
@@ -159,7 +159,7 @@ test "reset to default, old non-null" {
     var fixed_buf_stream = fixedBufferStream(&buf);
 
     try updateStyle(fixed_buf_stream.writer(), Style{}, Style{
-        .font_style = FontStyle.bold,
+        .font_style = FontStyle.Bold,
     });
 
     const expected = "\x1B[0m";
@@ -173,7 +173,7 @@ test "bold style" {
     var fixed_buf_stream = fixedBufferStream(&buf);
 
     try updateStyle(fixed_buf_stream.writer(), Style{
-        .font_style = FontStyle.bold,
+        .font_style = FontStyle.Bold,
     }, Style{});
 
     const expected = "\x1B[1m";
@@ -189,7 +189,7 @@ test "add bold style" {
     try updateStyle(fixed_buf_stream.writer(), Style{
         .font_style = FontStyle{ .bold = true, .italic = true },
     }, Style{
-        .font_style = FontStyle.italic,
+        .font_style = FontStyle.Italic,
     });
 
     const expected = "\x1B[1m";
@@ -203,7 +203,7 @@ test "reset required font style" {
     var fixed_buf_stream = fixedBufferStream(&buf);
 
     try updateStyle(fixed_buf_stream.writer(), Style{
-        .font_style = FontStyle.bold,
+        .font_style = FontStyle.Bold,
     }, Style{
         .font_style = FontStyle{ .bold = true, .underline = true },
     });
@@ -219,7 +219,7 @@ test "reset required color style" {
     var fixed_buf_stream = fixedBufferStream(&buf);
 
     try updateStyle(fixed_buf_stream.writer(), Style{
-        .foreground = Color.Red,
+        .foreground = Color.red,
     }, null);
 
     const expected = "\x1B[0m\x1B[31m";
@@ -233,7 +233,7 @@ test "no reset required color style" {
     var fixed_buf_stream = fixedBufferStream(&buf);
 
     try updateStyle(fixed_buf_stream.writer(), Style{
-        .foreground = Color.Red,
+        .foreground = Color.red,
     }, Style{});
 
     const expected = "\x1B[31m";
@@ -247,10 +247,10 @@ test "no reset required add color style" {
     var fixed_buf_stream = fixedBufferStream(&buf);
 
     try updateStyle(fixed_buf_stream.writer(), Style{
-        .foreground = Color.Red,
-        .background = Color.Magenta,
+        .foreground = Color.red,
+        .background = Color.magenta,
     }, Style{
-        .background = Color.Magenta,
+        .background = Color.magenta,
     });
 
     const expected = "\x1B[31m";
@@ -279,7 +279,7 @@ test "Grey foreground color" {
     var buf: [1024]u8 = undefined;
     var fixed_buf_stream = fixedBufferStream(&buf);
     var new_style = Style{};
-    new_style.foreground = Color{ .Grey = 1 };
+    new_style.foreground = Color{ .grey = 1 };
 
     try updateStyle(fixed_buf_stream.writer(), new_style, Style{});
 
@@ -293,7 +293,7 @@ test "Grey background color" {
     var buf: [1024]u8 = undefined;
     var fixed_buf_stream = fixedBufferStream(&buf);
     var new_style = Style{};
-    new_style.background = Color{ .Grey = 1 };
+    new_style.background = Color{ .grey = 1 };
 
     try updateStyle(fixed_buf_stream.writer(), new_style, Style{});
 

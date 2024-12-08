@@ -29,14 +29,14 @@ pub fn parseStyle(code: []const u8) ?Style {
     }
 
     var font_style = FontStyle{};
-    var foreground: Color = .Default;
-    var background: Color = .Default;
+    var foreground: Color = .default;
+    var background: Color = .default;
 
     var state = ParseState.parse_8;
     var red: u8 = 0;
     var green: u8 = 0;
 
-    var iter = std.mem.split(u8, code, ";");
+    var iter = std.mem.splitScalar(u8, code, ';');
     while (iter.next()) |str| {
         const part = std.fmt.parseInt(u8, str, 10) catch return null;
 
@@ -54,26 +54,26 @@ pub fn parseStyle(code: []const u8) ?Style {
                     8 => font_style.hidden = true,
                     9 => font_style.crossedout = true,
                     20 => font_style.fraktur = true,
-                    30 => foreground = Color.Black,
-                    31 => foreground = Color.Red,
-                    32 => foreground = Color.Green,
-                    33 => foreground = Color.Yellow,
-                    34 => foreground = Color.Blue,
-                    35 => foreground = Color.Magenta,
-                    36 => foreground = Color.Cyan,
-                    37 => foreground = Color.White,
+                    30 => foreground = Color.black,
+                    31 => foreground = Color.red,
+                    32 => foreground = Color.green,
+                    33 => foreground = Color.yellow,
+                    34 => foreground = Color.blue,
+                    35 => foreground = Color.magenta,
+                    36 => foreground = Color.cyan,
+                    37 => foreground = Color.white,
                     38 => state = ParseState.parse_fg_non_8,
-                    39 => foreground = Color.Default,
-                    40 => background = Color.Black,
-                    41 => background = Color.Red,
-                    42 => background = Color.Green,
-                    43 => background = Color.Yellow,
-                    44 => background = Color.Blue,
-                    45 => background = Color.Magenta,
-                    46 => background = Color.Cyan,
-                    47 => background = Color.White,
+                    39 => foreground = Color.default,
+                    40 => background = Color.black,
+                    41 => background = Color.red,
+                    42 => background = Color.green,
+                    43 => background = Color.yellow,
+                    44 => background = Color.blue,
+                    45 => background = Color.magenta,
+                    46 => background = Color.cyan,
+                    47 => background = Color.white,
                     48 => state = ParseState.parse_bg_non_8,
-                    49 => background = Color.Default,
+                    49 => background = Color.default,
                     53 => font_style.overline = true,
                     else => {
                         return null;
@@ -90,7 +90,7 @@ pub fn parseStyle(code: []const u8) ?Style {
                 }
             },
             .parse_fg_256 => {
-                foreground = Color{ .Fixed = part };
+                foreground = Color{ .fixed = part };
                 state = ParseState.parse_8;
             },
             .parse_fg_red => {
@@ -103,7 +103,7 @@ pub fn parseStyle(code: []const u8) ?Style {
             },
             .parse_fg_blue => {
                 foreground = Color{
-                    .RGB = .{
+                    .rgb = .{
                         .r = red,
                         .g = green,
                         .b = part,
@@ -121,7 +121,7 @@ pub fn parseStyle(code: []const u8) ?Style {
                 }
             },
             .parse_bg_256 => {
-                background = Color{ .Fixed = part };
+                background = Color{ .fixed = part };
                 state = ParseState.parse_8;
             },
             .parse_bg_red => {
@@ -134,7 +134,7 @@ pub fn parseStyle(code: []const u8) ?Style {
             },
             .parse_bg_blue => {
                 background = Color{
-                    .RGB = .{
+                    .rgb = .{
                         .r = red,
                         .g = green,
                         .b = part,
@@ -164,7 +164,7 @@ test "parse empty style" {
 test "parse bold style" {
     const actual = parseStyle("01");
     const expected = Style{
-        .font_style = FontStyle.bold,
+        .font_style = FontStyle.Bold,
     };
 
     try expectEqual(@as(?Style, expected), actual);
@@ -173,7 +173,7 @@ test "parse bold style" {
 test "parse yellow style" {
     const actual = parseStyle("33");
     const expected = Style{
-        .foreground = Color.Yellow,
+        .foreground = Color.yellow,
 
         .font_style = FontStyle{},
     };
@@ -184,9 +184,9 @@ test "parse yellow style" {
 test "parse some fixed color" {
     const actual = parseStyle("38;5;220;1");
     const expected = Style{
-        .foreground = Color{ .Fixed = 220 },
+        .foreground = Color{ .fixed = 220 },
 
-        .font_style = FontStyle.bold,
+        .font_style = FontStyle.Bold,
     };
 
     try expectEqual(@as(?Style, expected), actual);
@@ -195,9 +195,9 @@ test "parse some fixed color" {
 test "parse some rgb color" {
     const actual = parseStyle("38;2;123;123;123;1");
     const expected = Style{
-        .foreground = Color{ .RGB = .{ .r = 123, .g = 123, .b = 123 } },
+        .foreground = Color{ .rgb = .{ .r = 123, .g = 123, .b = 123 } },
 
-        .font_style = FontStyle.bold,
+        .font_style = FontStyle.Bold,
     };
 
     try expectEqual(@as(?Style, expected), actual);
